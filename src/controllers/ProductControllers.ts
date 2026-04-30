@@ -11,7 +11,7 @@ import {
   NotFoundError,
   BadRequestError,
 } from "routing-controllers";
-import { ProductDTO } from "../dto/Product";
+import { ProductRequestDTO, ProductResponseDTO } from '../dto/Product';
 import { MESSAGE_ERROR } from "../const/message-error.const";
 import { ProductInterface } from "../interfaces/product.interface";
 
@@ -22,13 +22,15 @@ export class ProductController {
   @Get("")
   getAll() {
     return {
+      success: true,
       data: [...this.products],
     };
   }
 
-  @Get("/verification/:id")
-  verifyIdentifier(@Param("id") id: number | string) {
-    return this.products.some((product) => product.id === id);
+  @Get('/:id/verify')
+  verifyIdentifier(@Param('id') id: number | string) {
+    const exists = this.products.some((product) => product.id === id);
+    return { success: true, data: { exists } };
   }
 
   @Get("/:id")
@@ -38,11 +40,11 @@ export class ProductController {
     if(index === -1) {
       throw new NotFoundError(MESSAGE_ERROR.NotFound);
     }
-    return this.products.find((product) => product.id === id);
+    return { success: true, data: this.products.find((product) => product.id === id) };
   }
 
   @Post("")
-  createItem(@Body({ validate:true }) productItem: ProductDTO) {
+  createItem(@Body({ validate: true }) productItem: ProductRequestDTO) {
     
     const index = this.findIndex(productItem.id);
 
@@ -50,9 +52,10 @@ export class ProductController {
       throw new BadRequestError(MESSAGE_ERROR.DuplicateIdentifier);
     }
     
-    this.products.push(productItem);
+    this.products.push(productItem as ProductResponseDTO);
     return {
-      message: "Product added successfully",
+      success: true,
+      message: 'Product added successfully',
       data: productItem,
     };
   }
@@ -70,7 +73,8 @@ export class ProductController {
       ...productItem,
     };
     return {
-      message: "Product updated successfully",
+      success: true,
+      message: 'Product updated successfully',
       data: productItem,
     };
   }
@@ -84,9 +88,7 @@ export class ProductController {
     }
         
     this.products = [...this.products.filter((product) => product.id !== id)];
-    return {
-      message: "Product removed successfully",
-    };
+    return { success: true, message: 'Product removed successfully' };
   }
 
   private findIndex(id: number | string) {
