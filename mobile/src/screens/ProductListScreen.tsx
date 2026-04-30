@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Button} from 'react-native';
 import ProductList from './ProductList';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList, Product} from '../types';
