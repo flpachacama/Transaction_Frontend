@@ -1,190 +1,116 @@
-# Transaction Management System
+# Transaction Frontend Challenge
 
-Product management system with Express backend and React Native mobile frontend.
+Implementación del ejercicio técnico (2024) con backend en Node.js/TypeScript y frontend web en React + Vite.
 
-## Overview
+## Contexto actual
 
-Full-stack application for managing products with CRUD operations, advanced search, and form validations. Includes comprehensive error handling, global state management, and Jest test suite with 70%+ coverage.
+El repositorio contiene:
 
-## Tech Stack
+- `src/`: backend API local (puerto `3002`)
+- `web/`: frontend web funcional (alineado al flujo F1-F6)
+- `mobile/`: base de app móvil (pendiente de actualización)
 
-**Backend:**
-- Node.js + Express
-- TypeScript 5.4.2
-- routing-controllers 0.10.4
-- class-validator for DTOs
+## Stack
 
-**Mobile Frontend:**
-- React Native 0.71.8
-- React 18.2.0
-- TypeScript 5.4.2
-- React Navigation 6.1.7
-- React Context API for state
+### Backend
 
-**Testing:**
-- Jest 29.5.0
-- React Native Testing Library
-- ts-jest transformer
+- Node.js
+- Express + `routing-controllers`
+- TypeScript
+- `class-validator`
 
-**Code Quality:**
-- ESLint 8.44.0
-- Prettier 3.0.0
+### Frontend Web
 
-## Prerequisites
+- React 18
+- TypeScript
+- Vite
 
-- Node.js 18+ and npm 9+
-- React Native CLI (for mobile development)
-- Git
+## Estructura del proyecto
 
-## Project Structure
-
-```
+```bash
 .
-├── src/                          # Backend (Express)
-│   ├── main.ts                   # Server entry point (port 3002)
+├── src/                    # Backend API
+│   ├── main.ts             # Inicialización servidor (port 3002)
 │   ├── controllers/
-│   │   └── ProductControllers.ts # CRUD endpoints
 │   ├── dto/
-│   │   └── Product.ts            # Request/Response DTOs
 │   ├── interfaces/
-│   │   └── product.interface.ts  # Product type definition
-│   ├── const/
-│   │   └── message-error.const.ts# Error messages
-│   └── middlewares/
-│       └── ErrorHandler.ts       # Global error handler
-│
-├── mobile/                       # React Native Frontend
+│   ├── middlewares/
+│   └── const/
+├── web/                    # Frontend web (actual)
 │   ├── src/
-│   │   ├── App.tsx               # Root component
-│   │   ├── screens/              # Navigation screens
-│   │   │   ├── ProductListScreen.tsx
-│   │   │   ├── ProductDetailScreen.tsx
-│   │   │   ├── ProductCreateScreen.tsx
-│   │   │   └── ProductEditScreen.tsx
-│   │   ├── components/
-│   │   │   ├── ProductForm.tsx        # Reusable form
-│   │   │   ├── ProductCard.tsx        # List item
-│   │   │   ├── ErrorOverlay.tsx       # Error modal
-│   │   │   └── Field.tsx              # Form input
-│   │   ├── context/
-│   │   │   └── AppContext.tsx         # Global state (loading, errors)
-│   │   ├── hooks/
-│   │   │   └── useAppState.ts         # Context consumer
-│   │   ├── api/
-│   │   │   └── index.ts               # API client with error handling
-│   │   ├── utils/
-│   │   │   ├── errorMessages.ts       # Error code mapping
-│   │   │   └── validation.ts          # Form validation functions
-│   │   └── types/
-│   │       └── index.ts               # Navigation & data types
-│   ├── __tests__/                # Jest test suite (70%+ coverage)
-│   ├── jest.config.js
-│   ├── jest.setup.js
-│   └── package.json
-│
-├── tsconfig.json
-├── package.json
+│   ├── package.json
+│   └── vite.config.js
+├── mobile/                 # Frontend React Native (próximamente)
+├── package.json            # Scripts backend
 └── README.md
 ```
 
-## Backend API
+## API Backend
 
-**Base URL:** `http://localhost:3002`
+Base URL:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/products` | List all products |
-| POST | `/products` | Create product |
-| GET | `/products/:id` | Get product by ID |
-| PUT | `/products/:id` | Update product |
-| DELETE | `/products/:id` | Delete product |
-| GET | `/products/:id/verify` | Verify product exists |
+`http://localhost:3002`
 
-**Response Format:**
-```json
-{
-  "success": true,
-  "data": { /* payload */ }
-}
-```
+Endpoints:
 
-## Getting Started
+- `GET /bp/products`
+- `GET /bp/products/:id`
+- `POST /bp/products`
+- `PUT /bp/products/:id`
+- `DELETE /bp/products/:id`
+- `GET /bp/products/verification/:id` (retorna `true | false`)
 
-### 1. Install Dependencies
+## Cómo ejecutarlo
+
+### 1) Backend
+
+Desde la raíz del proyecto:
 
 ```bash
-# Backend dependencies
 npm install
+npm run start:dev
+```
 
-# Mobile dependencies
-cd mobile
+Servidor disponible en:
+
+`http://localhost:3002`
+
+> Nota: el backend usa almacenamiento en memoria (se reinicia al apagar el servidor).
+
+### 2) Web
+
+En otra terminal:
+
+```bash
+cd web
 npm install
+npm run dev
 ```
 
-### 2. Start Backend
+Aplicación web disponible en:
 
-```bash
-# From project root
-npm start
-```
+`http://localhost:5173`
 
-Server runs on `http://localhost:3002`. Uses in-memory product storage.
+### 3) Mobile (próximamente)
 
-### 3. Start Mobile Frontend
+La carpeta `mobile/` se mantiene como base inicial, pero su documentación de ejecución se publicará cuando se complete la integración final con el backend actualizado.
 
-```bash
-# From mobile directory
-npm start
+## Estado funcional
 
-# For Android
-npm run android
+### Web
 
-# For iOS
-npm run ios
-```
+- F1: listado de productos
+- F2: búsqueda de productos
+- F3: contador de registros
+- F4: creación de producto con validaciones
+- F5: edición de producto con ID bloqueado
+- F6: eliminación con modal de confirmación
 
-### 4. Run Tests
+### Validaciones implementadas
 
-```bash
-# From mobile directory
-npm test
-
-# With coverage report
-npm test -- --coverage
-
-# Watch mode
-npm test -- --watch
-```
-
-Coverage thresholds: **70%** (statements, branches, functions, lines)
-
-## Form Validations
-
-Product form enforces:
-- **ID:** 3-10 characters, unique, verified via API
-- **Name:** 5-100 characters
-- **Description:** 10-200 characters
-- **Logo:** Required (URL/path)
-- **Release Date:** Valid date (YYYY-MM-DD), >= today
-- **Revision Date:** Auto-calculated (+1 year from release date)
-
-## Error Handling
-
-Global error management via AppContext:
-- Centralized error/loading state
-- Field-level validation errors displayed inline
-- User-friendly error messages
-- HTTP error codes mapped to readable messages
-- Network errors gracefully handled
-
-## Key Features
-
-✅ Product CRUD with validation  
-✅ Advanced search with 400ms debounce  
-✅ Product count updated with active filters  
-✅ Create/Edit forms reusing ProductForm component  
-✅ Global error overlay with field errors  
-✅ Loading states for async operations  
-✅ Jest test suite (70%+ coverage)  
-✅ React Navigation with type-safe routing  
-✅ No external UI libraries (React Native StyleSheet)
+- `id`: requerido, 3-10 caracteres, único (validación por endpoint)
+- `name`: requerido, 5-100 caracteres
+- `description`: requerido, 10-200 caracteres
+- `logo`: requerido
+- `date_release`: fecha válida y mayor o igual a hoy
+- `date_revision`: exactamente un año después de `date_release`
