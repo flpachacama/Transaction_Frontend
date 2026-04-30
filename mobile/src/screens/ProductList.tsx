@@ -3,6 +3,8 @@ import {View, Text, FlatList, ActivityIndicator, StyleSheet, TextInput} from 're
 import {getProducts} from '../api';
 import ProductCard from '../components/ProductCard';
 import {Product} from '../types';
+import {useAppState} from '../hooks/useAppState';
+import {mapApiError} from '../utils/errorMessages';
 
 type Props = {
   onSelect?: (item: Product) => void;
@@ -11,28 +13,36 @@ type Props = {
 const DEBOUNCE_MS = 400;
 
 const ProductList: React.FC<Props> = ({onSelect}) => {
+  const {setLoading, setError, isLoading} = useAppState();
   const [allItems, setAllItems] = useState<Product[]>([]);
   const [items, setItems] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    getProducts()
-      .then((data) => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const data = await getProducts();
         setAllItems(data);
         setItems(data);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+      } catch (err: any) {
+        const {message, code} = mapApiError(err);
+        setError({code, message});
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [setLoading, setError]);
 
   useEffect(() => {
     // debounce filter
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
-    // @ts-ignore setTimeout returns number in RN
+    // @ts-ignore
     timerRef.current = setTimeout(() => {
       const q = query.trim().toLowerCase();
       if (!q) {
@@ -48,7 +58,7 @@ const ProductList: React.FC<Props> = ({onSelect}) => {
     };
   }, [query, allItems]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator />
@@ -65,6 +75,10 @@ const ProductList: React.FC<Props> = ({onSelect}) => {
           onChangeText={setQuery}
           style={styles.input}
         />
+      </View>
+
+      <View style={styles.counterWrap}>
+        <Text>{`Total: ${items.length}`}</Text>
       </View>
 
       {!items.length ? (
@@ -86,6 +100,7 @@ const styles = StyleSheet.create({
   center: {flex: 1, alignItems: 'center', justifyContent: 'center'},
   searchWrap: {padding: 8, borderBottomWidth: 1, borderColor: '#eee'},
   input: {backgroundColor: '#fff', padding: 8, borderRadius: 6, borderWidth: 1, borderColor: '#ddd'},
+  counterWrap: {padding: 8, alignItems: 'flex-end', borderBottomWidth: 1, borderColor: '#f5f5f5'},
 });
 
 export default ProductList;

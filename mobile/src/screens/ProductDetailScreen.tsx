@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Button} from 'react-native';
 import ProductDetail from './ProductDetail';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../types';
@@ -8,6 +8,12 @@ type Props = NativeStackScreenProps<RootStackParamList, 'ProductDetail'>;
 
 const ProductDetailScreen: React.FC<Props> = ({route, navigation}) => {
   const {product} = route.params;
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Button title="Edit" onPress={() => navigation.navigate('ProductEdit', {product})} />,
+    });
+  }, [navigation, product]);
 
   return (
     <View style={styles.container}>

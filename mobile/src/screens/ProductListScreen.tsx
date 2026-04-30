@@ -7,6 +7,12 @@ import {RootStackParamList, Product} from '../types';
 type Props = NativeStackScreenProps<RootStackParamList, 'ProductList'>;
 
 const ProductListScreen: React.FC<Props> = ({navigation}) => {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Button title="New" onPress={() => navigation.navigate('ProductCreate')} />,
+    });
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <ProductList onSelect={(p: Product) => navigation.navigate('ProductDetail', {product: p})} />

@@ -1,6 +1,8 @@
 export type RootStackParamList = {
   ProductList: undefined;
   ProductDetail: { product: Product };
+  ProductCreate: undefined;
+  ProductEdit: { product: Product };
 };
 
 export type Product = {
