@@ -220,11 +220,10 @@ function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        <h1>Banco</h1>
-      </header>
-
-      <main className="container">
+      <main className="phone-shell">
+        <header className="header">
+          <h1>BANCO</h1>
+        </header>
         {error && <div className="error">{error}</div>}
         {loading && <div className="loading">Cargando...</div>}
 
@@ -240,51 +239,20 @@ function App() {
               />
             </div>
 
-            <div className="table-wrapper">
-              <table className="products-table">
-                <thead>
-                  <tr>
-                    <th>Logo</th>
-                    <th>Nombre del producto</th>
-                    <th>Descripción</th>
-                    <th>Fecha de liberación</th>
-                    <th>Fecha de reestructuración</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProducts.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="empty-cell">No hay productos para mostrar</td>
-                    </tr>
-                  ) : (
-                    filteredProducts.map((product) => (
-                      <tr key={product.id} onClick={() => handleSelectProduct(product)}>
-                        <td>
-                          <img
-                            className="table-logo"
-                            src={product.logo || DEFAULT_LOGO_URL}
-                            alt={product.name}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = DEFAULT_LOGO_URL;
-                            }}
-                          />
-                        </td>
-                        <td>{product.name}</td>
-                        <td>{product.description}</td>
-                        <td>{product.date_release}</td>
-                        <td>{product.date_revision}</td>
-                        <td>
-                          <div className="row-actions" onClick={(e) => e.stopPropagation()}>
-                            <button className="btn btn-secondary" onClick={() => openEdit(product)}>Editar</button>
-                            <button className="btn btn-danger" onClick={() => setConfirmDelete(product)}>Eliminar</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+            <div className="product-list">
+              {filteredProducts.length === 0 ? (
+                <p className="empty-cell">No hay productos para mostrar</p>
+              ) : (
+                filteredProducts.map((product) => (
+                  <button key={product.id} className="product-item" onClick={() => handleSelectProduct(product)}>
+                    <div>
+                      <p className="item-name">{product.name}</p>
+                      <p className="item-id">ID: {product.id}</p>
+                    </div>
+                    <span className="item-arrow">&#8250;</span>
+                  </button>
+                ))
+              )}
             </div>
 
             <div className="list-footer">
@@ -297,7 +265,8 @@ function App() {
         {page === 'detail' && selectedProduct && (
           <section className="detail-page">
             <div className="form-card">
-              <h2>{selectedProduct.name}</h2>
+              <h2>ID: {selectedProduct.id}</h2>
+              <p className="subtitle">Información extra</p>
               <div className="detail-logo-wrapper">
                 <img
                   className="detail-logo"
@@ -308,13 +277,15 @@ function App() {
                   }}
                 />
               </div>
-              <p><strong>ID:</strong> {selectedProduct.id}</p>
-              <p><strong>Descripción:</strong> {selectedProduct.description}</p>
-              <p><strong>Fecha de liberación:</strong> {selectedProduct.date_release}</p>
-              <p><strong>Fecha de revisión:</strong> {selectedProduct.date_revision}</p>
+              <div className="detail-row"><span>Nombre</span><strong>{selectedProduct.name}</strong></div>
+              <div className="detail-row"><span>Descripción</span><strong>{selectedProduct.description}</strong></div>
+              <div className="detail-row"><span>Logo</span><span></span></div>
+              <div className="detail-row"><span>Fecha liberación</span><strong>{selectedProduct.date_release}</strong></div>
+              <div className="detail-row"><span>Fecha revisión</span><strong>{selectedProduct.date_revision}</strong></div>
               <div className="form-actions">
                 <button className="btn btn-secondary" onClick={() => setPage('list')}>Volver</button>
-                <button className="btn btn-primary" onClick={() => openEdit(selectedProduct)}>Editar</button>
+                <button className="btn btn-neutral" onClick={() => openEdit(selectedProduct)}>Editar</button>
+                <button className="btn btn-danger" onClick={() => setConfirmDelete(selectedProduct)}>Eliminar</button>
               </div>
             </div>
           </section>
@@ -385,11 +356,11 @@ function App() {
               </div>
 
               <div className="form-actions">
-                <button className="btn btn-secondary" onClick={() => setPage('list')}>Cancelar</button>
-                <button className="btn btn-warning" onClick={resetForm}>Reiniciar</button>
                 <button className="btn btn-primary" disabled={saving} onClick={() => handleSave(page)}>
-                  {saving ? 'Guardando...' : page === 'create' ? 'Agregar' : 'Guardar Cambios'}
+                  {saving ? 'Guardando...' : page === 'create' ? 'Enviar' : 'Guardar Cambios'}
                 </button>
+                <button className="btn btn-neutral" onClick={resetForm}>Reiniciar</button>
+                <button className="btn btn-secondary" onClick={() => setPage('list')}>Cancelar</button>
               </div>
             </div>
           </section>
@@ -399,12 +370,13 @@ function App() {
       {confirmDelete && (
         <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setConfirmDelete(null)}>&times;</button>
             <p>¿Estás seguro de eliminar el producto {confirmDelete.name}?</p>
             <div className="form-actions">
-              <button className="btn btn-secondary" onClick={() => setConfirmDelete(null)}>Cancelar</button>
-              <button className="btn btn-danger" disabled={saving} onClick={handleDelete}>
-                {saving ? 'Eliminando...' : 'Eliminar'}
+              <button className="btn btn-primary" disabled={saving} onClick={handleDelete}>
+                {saving ? 'Eliminando...' : 'Confirmar'}
               </button>
+              <button className="btn btn-neutral" onClick={() => setConfirmDelete(null)}>Cancelar</button>
             </div>
           </div>
         </div>
