@@ -8,11 +8,9 @@ export class ErrorHandler implements ExpressErrorMiddlewareInterface {
     const message = error.message || 'Internal Server Error';
 
     response.status(status).json({
-      success: false,
-      status,
-      error: {
-        message,
-      },
+      name: error.name || 'Error',
+      message,
+      ...(error?.errors ? { errors: error.errors } : {}),
     });
   }
 }

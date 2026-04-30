@@ -5,8 +5,7 @@ const PORT = 3002;
 
 // creates express app, registers all controller routes and returns you express app instance
 const app = createExpressServer({
-  // no route prefix — endpoints will be mounted at root
-  routePrefix: '',
+  routePrefix: '/bp',
   controllers: [__dirname + '/controllers/*{.js,.ts}'],
   middlewares: [__dirname + '/middlewares/*{.js,.ts}'],
   defaultErrorHandler: false,

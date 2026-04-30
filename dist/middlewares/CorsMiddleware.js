@@ -6,16 +6,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ErrorHandler = void 0;
+exports.CorsMiddleware = void 0;
 const routing_controllers_1 = require("routing-controllers");
-let ErrorHandler = class ErrorHandler {
-    error(error, request, response, next) {
-        const status = error.httpCode || error.status || 500;
-        const message = error.message || 'Internal Server Error';
-        response.status(status).json(Object.assign({ name: error.name || 'Error', message }, ((error === null || error === void 0 ? void 0 : error.errors) ? { errors: error.errors } : {})));
+let CorsMiddleware = class CorsMiddleware {
+    use(req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.setHeader('Access-Control-Max-Age', '3600');
+        // Handle preflight requests
+        if (req.method === 'OPTIONS') {
+            res.sendStatus(200);
+        }
+        else {
+            next();
+        }
     }
 };
-ErrorHandler = __decorate([
-    (0, routing_controllers_1.Middleware)({ type: 'after' })
-], ErrorHandler);
-exports.ErrorHandler = ErrorHandler;
+CorsMiddleware = __decorate([
+    (0, routing_controllers_1.Middleware)({ type: 'before' })
+], CorsMiddleware);
+exports.CorsMiddleware = CorsMiddleware;
