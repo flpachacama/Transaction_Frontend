@@ -9,13 +9,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "web": {}
   },
   "name": "mobile-app",
   "displayName": "MobileApp"
